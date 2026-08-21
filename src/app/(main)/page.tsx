@@ -38,29 +38,63 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col w-full">
-      {/* Hero Section */}
-      <section className="relative w-full min-h-[500px] sm:h-[600px] py-20 sm:py-0 bg-slate-900 flex items-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop")' }}
-        />
-        <div className="container relative z-10 mx-auto px-4 sm:px-6">
-          <div className="max-w-3xl space-y-6">
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white leading-tight">
-              Membangun Pemimpin Masa Depan di Bidang Ekonomi dan Bisnis
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl text-slate-200 max-w-2xl">
-              Fakultas Ekonomi Universitas Garut berkomitmen menghasilkan lulusan yang unggul, inovatif, dan berdaya saing global melalui pendidikan berkualitas.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/program-studi" className={cn(buttonVariants({ size: "lg" }), "bg-blue-600 hover:bg-blue-700 text-white border-none rounded-full px-8 w-full sm:w-auto text-center justify-center")}>
-                Jelajahi Program Studi
-              </Link>
-              <Link href="https://pmb.uniga.ac.id" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "text-slate-900 bg-white/90 hover:bg-white rounded-full px-8 w-full sm:w-auto text-center justify-center")}>
-                Pendaftaran Mahasiswa Baru
-              </Link>
+      {/* Hero Section (Video Banner) */}
+      <section className="relative w-full h-[500px] sm:h-[650px] flex flex-col items-center justify-center overflow-hidden bg-slate-900">
+        {/* Background Video (fallback image handled via poster or mix-blend) */}
+        <div className="absolute inset-0 w-full h-full">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+            className="object-cover w-full h-full"
+            poster="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop"
+          >
+            <source src="https://i.imgur.com/qiZRt9V.mp4" type="video/mp4" />
+          </video>
+          {/* Overlay gradient */}
+          <div className="absolute inset-0 bg-slate-900/40"></div>
+        </div>
+
+        {/* Content */}
+        <div className="container relative z-10 mx-auto px-4 sm:px-6 flex flex-col items-center text-center -mt-10 sm:-mt-20">
+          <Link 
+            href="https://pmb.uniga.ac.id" 
+            className="flex items-center gap-3 bg-white/10 hover:bg-white/20 border border-white/30 backdrop-blur-md text-white rounded-full px-8 py-3.5 sm:px-10 sm:py-4 transition-all duration-300 shadow-xl"
+          >
+            <Users className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span className="font-semibold text-base sm:text-lg tracking-wide">Penerimaan Mahasiswa Baru</span>
+          </Link>
+
+          {/* Logos/Badges row */}
+          <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 mt-10 sm:mt-12">
+            <div className="bg-yellow-500 h-16 w-16 sm:h-20 sm:w-20 rounded-full flex flex-col items-center justify-center font-bold text-slate-900 text-[10px] sm:text-xs text-center border-4 border-white shadow-xl">
+              <span>AKREDITASI</span>
+              <span className="text-sm sm:text-base leading-none">UNGGUL</span>
+            </div>
+            <div className="bg-white/90 backdrop-blur px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-bold text-blue-800 text-xs sm:text-sm shadow-xl flex items-center gap-2">
+              <span className="text-xl">🏆</span> LAMEMBA
+            </div>
+            <div className="bg-white/90 backdrop-blur px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-bold text-blue-800 text-xs sm:text-sm shadow-xl flex items-center gap-2">
+              <span className="text-xl">🎖️</span> BAN-PT
             </div>
           </div>
+        </div>
+
+        {/* Curved Bottom Edge */}
+        <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+          <svg 
+            data-name="Layer 1" 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 1200 120" 
+            preserveAspectRatio="none"
+            className="relative block w-full h-[60px] sm:h-[120px]"
+          >
+            <path 
+              d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118,137.36,120.3,203.4,110.8,244.42,105,284.14,83,321.39,56.44Z" 
+              className="fill-white"
+            ></path>
+          </svg>
         </div>
       </section>
 
