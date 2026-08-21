@@ -1,4 +1,4 @@
-import { notFound } from 'next'
+import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { Card, CardContent } from '@/components/ui/card'
 import { CheckCircle2, User, Book, Target } from 'lucide-react'
