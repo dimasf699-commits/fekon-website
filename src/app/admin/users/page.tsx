@@ -45,8 +45,8 @@ export default function AdminUsersPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <table className="w-full text-sm text-left">
+          <div className="rounded-md border overflow-x-auto">
+            <table className="w-full text-sm text-left min-w-[800px]">
               <thead className="bg-slate-50 text-slate-600 font-medium border-b">
                 <tr>
                   <th className="px-4 py-3">Nama</th>
