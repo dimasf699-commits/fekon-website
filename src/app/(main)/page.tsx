@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight, BookOpen, GraduationCap, Globe, Search, PlayCircle, Users, Award, Calendar } from 'lucide-react'
+import { ArrowRight, BookOpen, GraduationCap, Globe, Search, PlayCircle, Users, Award, Calendar, BellRing } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,7 +17,7 @@ export default async function Home() {
     .eq('is_active', true)
     .order('name');
 
-  // Fetch latest 3 published posts
+  // Fetch latest 3 published posts (Berita)
   const { data: latestPosts } = await supabase
     .from('posts')
     .select(`
@@ -27,6 +27,14 @@ export default async function Home() {
     .eq('status', 'published')
     .order('created_at', { ascending: false })
     .limit(3);
+
+  // Fetch latest 4 published announcements (Pengumuman)
+  const { data: latestAnnouncements } = await supabase
+    .from('announcements')
+    .select('id, title, slug, created_at, is_important')
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(4);
 
   return (
     <div className="flex flex-col w-full">
@@ -195,59 +203,107 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Berita Terbaru */}
+      {/* Berita & Pengumuman */}
       <section className="py-16 sm:py-20 bg-slate-50">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 sm:mb-10 gap-4">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Berita & Informasi</h2>
-              <p className="text-slate-600 text-sm sm:text-base">Kabar terbaru dari Fakultas Ekonomi UNIGA.</p>
-            </div>
-            <Link href="/berita" className={cn(buttonVariants({ variant: "outline" }), "hidden sm:inline-flex")}>
-              Lihat Semua Berita
-            </Link>
-          </div>
-
-          {latestPosts && latestPosts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
-              {latestPosts.map((item, idx) => (
-                <Link key={item.id} href={`/berita/${item.slug}`} className="group bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-slate-200 flex flex-col h-full">
-                  <div className="aspect-video bg-slate-200 overflow-hidden relative">
-                    <img 
-                      src={`https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop&sig=${idx}`} 
-                      alt="News Thumbnail"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      {/* @ts-ignore */}
-                      {item.category?.name || 'Umum'}
-                    </div>
-                  </div>
-                  <div className="p-5 sm:p-6 flex-grow flex flex-col">
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-2 sm:mb-3">
-                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-                      <span>{new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                    </div>
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-slate-600 text-xs sm:text-sm line-clamp-3">
-                      {item.summary || 'Klik untuk membaca selengkapnya...'}
-                    </p>
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            
+            {/* Berita (Kiri) - 2 Kolom di Desktop */}
+            <div className="lg:col-span-2">
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Berita Terbaru</h2>
+                  <p className="text-slate-600 text-sm">Kabar dan artikel dari kampus.</p>
+                </div>
+                <Link href="/berita" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "hidden sm:inline-flex")}>
+                  Lihat Semua
                 </Link>
-              ))}
+              </div>
+
+              {latestPosts && latestPosts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+                  {latestPosts.map((item, idx) => (
+                    <Link key={item.id} href={`/berita/${item.slug}`} className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-slate-200 flex flex-col h-full">
+                      <div className="aspect-[16/10] bg-slate-200 overflow-hidden relative">
+                        <img 
+                          src={`https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop&sig=${idx}`} 
+                          alt="News Thumbnail"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute top-3 left-3 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                          {/* @ts-ignore */}
+                          {item.category?.name || 'Umum'}
+                        </div>
+                      </div>
+                      <div className="p-5 flex-grow flex flex-col">
+                        <div className="flex items-center gap-2 text-xs text-slate-500 mb-3">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span>{new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                        </div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                          {item.title}
+                        </h3>
+                        <p className="text-slate-600 text-sm line-clamp-2">
+                          {item.summary || 'Klik untuk membaca selengkapnya...'}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+                  <p className="text-slate-500">Belum ada berita yang dipublikasikan.</p>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="text-center py-10">
-              <p className="text-slate-500">Belum ada berita yang dipublikasikan.</p>
+
+            {/* Pengumuman (Kanan) - 1 Kolom di Desktop */}
+            <div className="lg:col-span-1">
+              <div className="flex justify-between items-center mb-8">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">Pengumuman</h2>
+                  <p className="text-slate-600 text-sm">Informasi akademik & kampus.</p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                {latestAnnouncements && latestAnnouncements.length > 0 ? (
+                  <div className="divide-y divide-slate-100">
+                    {latestAnnouncements.map((item) => (
+                      <Link 
+                        key={item.id} 
+                        href={`/pengumuman/${item.slug}`} 
+                        className="flex flex-col p-5 hover:bg-blue-50 transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                          <Calendar className="h-3.5 w-3.5" />
+                          <span>{new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                          {item.is_important && (
+                            <span className="ml-auto flex items-center gap-1 text-red-600 font-semibold bg-red-50 px-2 py-0.5 rounded">
+                              <BellRing className="h-3 w-3" /> Penting
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-slate-900 text-sm sm:text-base group-hover:text-blue-600 transition-colors line-clamp-2">
+                          {item.title}
+                        </h3>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-8 text-center">
+                    <p className="text-slate-500 text-sm">Tidak ada pengumuman terbaru saat ini.</p>
+                  </div>
+                )}
+                
+                <div className="p-4 border-t border-slate-100 bg-slate-50">
+                  <Link href="/pengumuman" className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center justify-center gap-1">
+                    Lihat Semua Pengumuman <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
             </div>
-          )}
-          
-          <div className="mt-8 sm:hidden">
-            <Link href="/berita" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}>
-              Lihat Semua Berita
-            </Link>
+
           </div>
         </div>
       </section>
