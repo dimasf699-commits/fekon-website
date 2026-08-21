@@ -3,13 +3,35 @@ import { ArrowRight, BookOpen, GraduationCap, Globe, Search, PlayCircle, Users, 
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Home() {
+export const revalidate = 0; // Prevent aggressive caching for now so user can see immediate changes
+
+export default async function Home() {
+  const supabase = await createClient();
+
+  // Fetch active study programs
+  const { data: studyPrograms } = await supabase
+    .from('study_programs')
+    .select('name, description, slug')
+    .eq('is_active', true)
+    .order('name');
+
+  // Fetch latest 3 published posts
+  const { data: latestPosts } = await supabase
+    .from('posts')
+    .select(`
+      id, title, slug, summary, created_at,
+      category:category_id(name)
+    `)
+    .eq('status', 'published')
+    .order('created_at', { ascending: false })
+    .limit(3);
+
   return (
     <div className="flex flex-col w-full">
       {/* Hero Section */}
       <section className="relative w-full min-h-[500px] sm:h-[600px] py-20 sm:py-0 bg-slate-900 flex items-center overflow-hidden">
-        {/* Placeholder image background */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-overlay"
           style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop")' }}
@@ -122,31 +144,34 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {[
-              { name: 'S1 Akuntansi', desc: 'Mencetak akuntan profesional yang andal dan berintegritas tinggi.', link: '/program-studi/akuntansi' },
-              { name: 'S1 Manajemen', desc: 'Membentuk manajer dan wirausahawan tangguh yang mampu bersaing global.', link: '/program-studi/manajemen' },
-              { name: 'S1 Pariwisata', desc: 'Mengembangkan ahli pariwisata yang inovatif dengan standar internasional.', link: '/program-studi/pariwisata' },
-              { name: 'S1 Bisnis Digital', desc: 'Menyiapkan talenta digital untuk memimpin transformasi bisnis masa depan.', link: '/program-studi/bisnis-digital' },
-            ].map((prodi, idx) => (
-              <Card key={idx} className="hover:shadow-xl transition-shadow group flex flex-col h-full border-slate-200">
-                <CardHeader className="p-5 sm:p-6">
-                  <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 mb-3 sm:mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                    <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
-                  </div>
-                  <CardTitle className="text-lg sm:text-xl">{prodi.name}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow p-5 pt-0 sm:p-6 sm:pt-0">
-                  <p className="text-slate-600 text-sm">{prodi.desc}</p>
-                </CardContent>
-                <CardFooter className="p-5 pt-0 sm:p-6 sm:pt-0">
-                  <Link href={prodi.link} className={cn(buttonVariants({ variant: "ghost" }), "w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50 justify-between h-12")}>
-                      Lihat Detail <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          {studyPrograms && studyPrograms.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {studyPrograms.map((prodi, idx) => (
+                <Card key={idx} className="hover:shadow-xl transition-shadow group flex flex-col h-full border-slate-200">
+                  <CardHeader className="p-5 sm:p-6">
+                    <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 mb-3 sm:mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                      <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
+                    </div>
+                    <CardTitle className="text-lg sm:text-xl">{prodi.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-grow p-5 pt-0 sm:p-6 sm:pt-0">
+                    <p className="text-slate-600 text-sm line-clamp-3">
+                      {prodi.description || 'Deskripsi program studi belum tersedia.'}
+                    </p>
+                  </CardContent>
+                  <CardFooter className="p-5 pt-0 sm:p-6 sm:pt-0">
+                    <Link href={`/program-studi/${prodi.slug}`} className={cn(buttonVariants({ variant: "ghost" }), "w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50 justify-between h-12")}>
+                        Lihat Detail <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-slate-500">Belum ada program studi yang dipublikasikan.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -157,7 +182,7 @@ export default function Home() {
             {[
               { label: 'Mahasiswa Aktif', value: '2,500+', icon: Users },
               { label: 'Dosen Pengajar', value: '80+', icon: GraduationCap },
-              { label: 'Program Studi', value: '4', icon: BookOpen },
+              { label: 'Program Studi', value: studyPrograms?.length || '0', icon: BookOpen },
               { label: 'Alumni Sukses', value: '10,000+', icon: Award },
             ].map((stat, idx) => (
               <div key={idx} className="flex flex-col items-center justify-center space-y-2 sm:space-y-3">
@@ -183,35 +208,42 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
-            {/* Placeholder News Cards */}
-            {[1, 2, 3].map((item) => (
-              <Link key={item} href={`/berita/sample-berita-${item}`} className="group bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-slate-200 flex flex-col h-full">
-                <div className="aspect-video bg-slate-200 overflow-hidden relative">
-                  <img 
-                    src={`https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop&sig=${item}`} 
-                    alt="News Thumbnail"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                    Kampus
+          {latestPosts && latestPosts.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
+              {latestPosts.map((item, idx) => (
+                <Link key={item.id} href={`/berita/${item.slug}`} className="group bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-slate-200 flex flex-col h-full">
+                  <div className="aspect-video bg-slate-200 overflow-hidden relative">
+                    <img 
+                      src={`https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=600&auto=format&fit=crop&sig=${idx}`} 
+                      alt="News Thumbnail"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      {/* @ts-ignore */}
+                      {item.category?.name || 'Umum'}
+                    </div>
                   </div>
-                </div>
-                <div className="p-5 sm:p-6 flex-grow flex flex-col">
-                  <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-2 sm:mb-3">
-                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-                    <span>{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  <div className="p-5 sm:p-6 flex-grow flex flex-col">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-2 sm:mb-3">
+                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+                      <span>{new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                    </div>
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-slate-600 text-xs sm:text-sm line-clamp-3">
+                      {item.summary || 'Klik untuk membaca selengkapnya...'}
+                    </p>
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
-                    Kegiatan Seminar Nasional Ekonomi Digital dan Kewirausahaan 2026
-                  </h3>
-                  <p className="text-slate-600 text-xs sm:text-sm line-clamp-3">
-                    Fakultas Ekonomi UNIGA kembali menyelenggarakan seminar nasional yang membahas tentang transformasi digital dalam dunia bisnis masa kini...
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10">
+              <p className="text-slate-500">Belum ada berita yang dipublikasikan.</p>
+            </div>
+          )}
+          
           <div className="mt-8 sm:hidden">
             <Link href="/berita" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full")}>
               Lihat Semua Berita
