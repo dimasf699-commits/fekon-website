@@ -13,7 +13,7 @@ export default async function Home() {
   // Fetch active study programs
   const { data: studyPrograms } = await supabase
     .from('study_programs')
-    .select('name, description, slug')
+    .select('name, description, slug, concentration, bg_image')
     .eq('is_active', true)
     .order('name');
 
@@ -177,36 +177,66 @@ export default async function Home() {
       </section>
 
       {/* Program Studi */}
-      <section className="py-16 sm:py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3 sm:mb-4">Program Studi Kami</h2>
-            <p className="text-slate-600 text-sm sm:text-base">
-              Pilih program studi yang sesuai dengan minat dan cita-cita karier masa depan Anda.
-            </p>
+      <section className="py-16 sm:py-24 bg-white relative overflow-hidden">
+        {/* Background Decorative Lines */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+             <path d="M0,100 C300,300 600,-100 1200,100" fill="none" stroke="black" strokeWidth="2"/>
+             <path d="M0,150 C300,350 600,-50 1200,150" fill="none" stroke="black" strokeWidth="2"/>
+             <path d="M0,200 C300,400 600,0 1200,200" fill="none" stroke="black" strokeWidth="2"/>
+          </svg>
+        </div>
+
+        <div className="container relative z-10 mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-5xl font-bold text-yellow-400 mb-3 sm:mb-4">Program Studi</h2>
+            <h3 className="text-4xl sm:text-6xl font-bold text-yellow-400 opacity-30 -mt-10 sm:-mt-12 select-none">Profile</h3>
           </div>
           
           {studyPrograms && studyPrograms.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10 max-w-6xl mx-auto">
               {studyPrograms.map((prodi, idx) => (
-                <Card key={idx} className="hover:shadow-xl transition-shadow group flex flex-col h-full border-slate-200">
-                  <CardHeader className="p-5 sm:p-6">
-                    <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 mb-3 sm:mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <GraduationCap className="h-5 w-5 sm:h-6 sm:w-6" />
+                <Link key={idx} href={`/program-studi/${prodi.slug}`} className="group relative rounded-[2rem] overflow-hidden block h-[350px] shadow-lg hover:shadow-2xl transition-all duration-500 bg-[#fffdf0] border border-yellow-100/50">
+                  
+                  {/* Hover Image Background (hidden by default) */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0">
+                    <img 
+                      src={prodi.bg_image || 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=800&auto=format&fit=crop'} 
+                      alt={prodi.name}
+                      className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000" 
+                    />
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
+                  </div>
+
+                  {/* Normal State Content (visible by default) */}
+                  <div className="relative z-10 flex flex-col p-8 h-full transition-all duration-500 group-hover:opacity-0 group-hover:scale-95">
+                    {/* Menu Icon */}
+                    <div className="mb-4">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </div>
-                    <CardTitle className="text-lg sm:text-xl">{prodi.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow p-5 pt-0 sm:p-6 sm:pt-0">
-                    <p className="text-slate-600 text-sm line-clamp-3">
-                      {prodi.description || 'Deskripsi program studi belum tersedia.'}
-                    </p>
-                  </CardContent>
-                  <CardFooter className="p-5 pt-0 sm:p-6 sm:pt-0">
-                    <Link href={`/program-studi/${prodi.slug}`} className={cn(buttonVariants({ variant: "ghost" }), "w-full text-blue-600 hover:text-blue-700 hover:bg-blue-50 justify-between h-12")}>
-                        Lihat Detail <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </CardFooter>
-                </Card>
+                    
+                    <h3 className="text-2xl font-bold text-center mb-6 text-slate-900">{prodi.name}</h3>
+                    
+                    <div className="text-center flex-grow flex flex-col justify-center">
+                      <p className="text-xs font-semibold text-slate-500 mb-2 tracking-widest uppercase">Konsentrasi</p>
+                      <p className="text-sm text-slate-700 leading-relaxed font-medium">
+                        {prodi.concentration || prodi.description || 'Peminatan belum tersedia.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Hover State Content (appears on hover) */}
+                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-8 group-hover:translate-y-0 p-8 text-center">
+                    <p className="text-yellow-400 font-medium text-lg mb-1">Program Studi</p>
+                    <h3 className="text-white text-2xl font-bold mb-8">{prodi.name}</h3>
+                    
+                    <span className="px-8 py-3 rounded-full border-2 border-white text-white text-sm font-bold tracking-widest hover:bg-white hover:text-black transition-colors duration-300">
+                      SELENGKAPNYA
+                    </span>
+                  </div>
+                </Link>
               ))}
             </div>
           ) : (

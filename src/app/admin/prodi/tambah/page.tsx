@@ -24,6 +24,8 @@ export default function AdminTambahProdiPage() {
     mission: '',
     accreditation: '',
     head_of_program: '',
+    concentration: '',
+    bg_image: '',
     is_active: true
   })
 
@@ -113,6 +115,17 @@ export default function AdminTambahProdiPage() {
                 </div>
 
                 <div className="space-y-2">
+                  <label className="text-sm font-medium">Konsentrasi (Peminatan)</label>
+                  <Textarea 
+                    placeholder="Contoh: Akuntansi Keuangan, Akuntansi Manajemen..." 
+                    rows={3}
+                    value={formData.concentration}
+                    onChange={(e) => setFormData({...formData, concentration: e.target.value})}
+                  />
+                  <p className="text-xs text-slate-500">Pisahkan dengan koma atau baris baru.</p>
+                </div>
+
+                <div className="space-y-2">
                   <label className="text-sm font-medium">Deskripsi Singkat</label>
                   <Textarea 
                     placeholder="Tulis deskripsi program studi..." 
@@ -151,6 +164,16 @@ export default function AdminTambahProdiPage() {
                 <CardTitle className="text-lg">Detail Tambahan</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Gambar Background Hover (Link)</label>
+                  <Input 
+                    placeholder="https://..." 
+                    value={formData.bg_image}
+                    onChange={(e) => setFormData({...formData, bg_image: e.target.value})}
+                  />
+                  <p className="text-xs text-slate-500">Masukkan link gambar (Unsplash, Imgur, dll) untuk latar belakang card saat di-hover.</p>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Ketua Program Studi</label>
                   <Input 
