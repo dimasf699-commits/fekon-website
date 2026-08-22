@@ -4,6 +4,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/server'
+import { PMB_URL } from '@/config/navigation'
 
 export const revalidate = 0; // Prevent aggressive caching for now so user can see immediate changes
 
@@ -59,8 +60,10 @@ export default async function Home() {
         {/* Content */}
         <div className="container relative z-10 mx-auto px-4 sm:px-6 flex flex-col items-center text-center -mt-10 sm:-mt-20">
           <Link 
-            href="https://pmb.uniga.ac.id" 
-            className="flex items-center gap-3 bg-white/10 hover:bg-white/20 border border-white/30 backdrop-blur-md text-white rounded-full px-8 py-3.5 sm:px-10 sm:py-4 transition-all duration-300 shadow-xl"
+            href={PMB_URL} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 bg-white/10 hover:bg-white/20 border border-white/30 backdrop-blur-md text-white rounded-full px-8 py-3.5 sm:px-10 sm:py-4 transition-all duration-300 shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <Users className="h-5 w-5 sm:h-6 sm:w-6" />
             <span className="font-semibold text-base sm:text-lg tracking-wide">Penerimaan Mahasiswa Baru</span>
@@ -103,17 +106,19 @@ export default async function Home() {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 text-center">
             {[
-              { title: 'SIAKAD', icon: Globe, href: 'https://siakad.uniga.ac.id' },
-              { title: 'PMB', icon: GraduationCap, href: 'https://pmb.uniga.ac.id' },
-              { title: 'EdLink', icon: PlayCircle, href: 'https://edlink.id' },
-              { title: 'Jurnal', icon: BookOpen, href: 'https://ojs.fekon.uniga.ac.id' },
+              { title: 'SIAKAD', icon: Globe, href: 'https://siakad.uniga.ac.id', external: true },
+              { title: 'PMB', icon: GraduationCap, href: PMB_URL, external: true },
+              { title: 'EdLink', icon: PlayCircle, href: 'https://edlink.id', external: true },
+              { title: 'Jurnal', icon: BookOpen, href: 'https://ojs.fekon.uniga.ac.id', external: true },
               { title: 'Dokumen', icon: Search, href: '/dokumen' },
-              { title: 'Link Layanan', icon: ArrowRight, href: '/link' },
+              { title: 'Layanan', icon: ArrowRight, href: '/layanan' },
             ].map((item, idx) => (
               <Link 
                 key={idx} 
                 href={item.href}
-                className="group flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl hover:bg-blue-50 transition-colors gap-2 sm:gap-3 border sm:border-none border-slate-100"
+                target={item.external ? "_blank" : undefined}
+                rel={item.external ? "noopener noreferrer" : undefined}
+                className="group flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl hover:bg-blue-50 transition-colors gap-2 sm:gap-3 border sm:border-none border-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
               >
                 <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 group-hover:scale-110 transition-transform">
                   <item.icon className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -387,10 +392,18 @@ export default async function Home() {
             Bergabunglah dengan Fakultas Ekonomi Universitas Garut dan jadilah pemimpin masa depan yang kompeten dan inovatif.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto sm:max-w-none">
-            <Link href="https://pmb.uniga.ac.id" target="_blank" className={cn(buttonVariants({ size: "lg" }), "bg-white text-blue-700 hover:bg-slate-100 rounded-full w-full sm:w-auto px-8 font-bold text-base h-12 sm:h-14")}>
+            <Link 
+              href={PMB_URL} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={cn(buttonVariants({ size: "lg" }), "bg-white text-blue-700 hover:bg-slate-100 rounded-full w-full sm:w-auto px-8 font-bold text-base h-12 sm:h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-700 focus-visible:ring-white")}
+            >
                 Daftar Sekarang
             </Link>
-            <Link href="/kontak" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "text-white border-white hover:bg-white/10 rounded-full w-full sm:w-auto px-8 font-bold text-base h-12 sm:h-14")}>
+            <Link 
+              href="/kontak" 
+              className={cn(buttonVariants({ size: "lg", variant: "outline" }), "text-white border-white hover:bg-white/10 rounded-full w-full sm:w-auto px-8 font-bold text-base h-12 sm:h-14 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-700 focus-visible:ring-white")}
+            >
               Hubungi Kami
             </Link>
           </div>
@@ -400,3 +413,4 @@ export default async function Home() {
     </div>
   )
 }
+

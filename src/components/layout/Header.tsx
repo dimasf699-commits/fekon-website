@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Menu, X, ChevronDown, ChevronUp } from 'lucide-react'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Menu, ChevronDown, ChevronUp } from 'lucide-react'
+import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import {
   DropdownMenu,
@@ -11,26 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
-
-const navigation = [
-  { name: 'Beranda', href: '/' },
-  { name: 'Profil', href: '/profil' },
-  {
-    name: 'Program Studi',
-    href: '/program-studi',
-    children: [
-      { name: 'S1 Akuntansi', href: '/program-studi/akuntansi' },
-      { name: 'S1 Manajemen', href: '/program-studi/manajemen' },
-      { name: 'S1 Pariwisata', href: '/program-studi/pariwisata' },
-      { name: 'S1 Bisnis Digital', href: '/program-studi/bisnis-digital' },
-    ],
-  },
-  { name: 'Akademik', href: '/akademik' },
-  { name: 'E-Service', href: '/layanan' },
-  { name: 'Berita', href: '/berita' },
-  { name: 'PMB', href: 'https://pmb.uniga.ac.id', external: true },
-]
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet'
+import { mainNavigation, PMB_URL } from '@/config/navigation'
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -45,7 +27,7 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-sm">
             <div className="h-8 w-8 rounded-full bg-blue-900 flex items-center justify-center text-white font-bold text-xs shrink-0">
               UNIGA
             </div>
@@ -59,17 +41,24 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          {navigation.map((item) => {
+          {mainNavigation.map((item) => {
             if (item.children) {
               return (
                 <DropdownMenu key={item.name}>
-                  <DropdownMenuTrigger className="flex items-center gap-1 hover:text-blue-700 transition-colors p-2">
+                  <DropdownMenuTrigger className="flex items-center gap-1 hover:text-blue-700 transition-colors p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md">
                     {item.name} <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start">
+                  <DropdownMenuContent align="start" className="w-56 z-[60]">
                     {item.children.map((child) => (
-                      <DropdownMenuItem key={child.name} render={<Link href={child.href} className="w-full cursor-pointer p-2" />}>
+                      <DropdownMenuItem key={child.name} asChild>
+                        <Link 
+                          href={child.href} 
+                          className="w-full cursor-pointer p-2 flex text-sm"
+                          target={child.external ? '_blank' : undefined}
+                          rel={child.external ? 'noopener noreferrer' : undefined}
+                        >
                           {child.name}
+                        </Link>
                       </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
@@ -80,7 +69,7 @@ export function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="hover:text-blue-700 transition-colors p-2"
+                className="hover:text-blue-700 transition-colors p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-md"
                 target={item.external ? '_blank' : undefined}
                 rel={item.external ? 'noopener noreferrer' : undefined}
               >
@@ -92,27 +81,37 @@ export function Header() {
 
         {/* Actions & Mobile Menu */}
         <div className="flex items-center gap-2">
-          <Link href="https://pmb.uniga.ac.id" target="_blank" rel="noopener noreferrer" className={cn(buttonVariants(), "hidden md:inline-flex bg-blue-700 hover:bg-blue-800")}>
+          <Link 
+            href={PMB_URL} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className={cn(buttonVariants(), "hidden md:inline-flex bg-blue-700 hover:bg-blue-800 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600")}
+          >
               Daftar Sekarang
           </Link>
 
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "md:hidden h-11 w-11")}>
+            <SheetTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "md:hidden h-11 w-11 focus-visible:ring-2 focus-visible:ring-blue-600")}>
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle menu</span>
             </SheetTrigger>
             <SheetContent side="right" className="w-[85vw] sm:w-[400px] overflow-y-auto">
-              <SheetTitle className="text-left font-bold text-blue-950 mb-4 border-b pb-4 mt-4">
+              <SheetTitle className="text-left font-bold text-blue-950 mb-2 border-b pb-4 mt-4">
                 Menu Utama
               </SheetTitle>
-              <nav className="flex flex-col gap-1">
-                {navigation.map((item) => (
+              <SheetDescription className="sr-only">
+                Navigasi utama website Fakultas Ekonomi Universitas Garut
+              </SheetDescription>
+              <nav className="flex flex-col gap-1 mt-2">
+                {mainNavigation.map((item) => (
                   <div key={item.name} className="flex flex-col">
                     {item.children ? (
                       <>
                         <button
+                          type="button"
                           onClick={() => toggleSubmenu(item.name)}
-                          className="flex items-center justify-between w-full py-3 px-2 font-medium text-left hover:bg-slate-50 rounded-md transition-colors"
+                          className="flex items-center justify-between w-full py-3 px-2 font-medium text-left hover:bg-slate-50 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                          aria-expanded={openSubmenu === item.name}
                         >
                           {item.name}
                           {openSubmenu === item.name ? (
@@ -127,8 +126,10 @@ export function Header() {
                               <Link
                                 key={child.name}
                                 href={child.href}
-                                className="py-2.5 px-2 text-sm text-slate-600 hover:text-blue-700 hover:bg-slate-50 rounded-md"
+                                className="py-2.5 px-2 text-sm text-slate-600 hover:text-blue-700 hover:bg-slate-50 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                                 onClick={() => setIsOpen(false)}
+                                target={child.external ? '_blank' : undefined}
+                                rel={child.external ? 'noopener noreferrer' : undefined}
                               >
                                 {child.name}
                               </Link>
@@ -139,9 +140,10 @@ export function Header() {
                     ) : (
                       <Link
                         href={item.href}
-                        className="py-3 px-2 font-medium hover:text-blue-700 hover:bg-slate-50 rounded-md transition-colors"
+                        className="py-3 px-2 font-medium hover:text-blue-700 hover:bg-slate-50 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                         onClick={() => setIsOpen(false)}
                         target={item.external ? '_blank' : undefined}
+                        rel={item.external ? 'noopener noreferrer' : undefined}
                       >
                         {item.name}
                       </Link>
@@ -149,7 +151,12 @@ export function Header() {
                   </div>
                 ))}
                 <div className="mt-6 pt-6 border-t">
-                  <Link href="https://pmb.uniga.ac.id" target="_blank" className={cn(buttonVariants({ size: "lg" }), "w-full bg-blue-700 hover:bg-blue-800 h-12")}>
+                  <Link 
+                    href={PMB_URL} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={cn(buttonVariants({ size: "lg" }), "w-full bg-blue-700 hover:bg-blue-800 h-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600")}
+                  >
                       Daftar Sekarang
                   </Link>
                 </div>

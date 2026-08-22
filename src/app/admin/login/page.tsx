@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <a href="#" className="text-xs text-blue-600 hover:underline">Lupa password?</a>
+                  <span className="text-xs text-slate-500 cursor-not-allowed" title="Hubungi administrator sistem untuk reset password">Lupa password?</span>
                 </div>
                 <Input 
                   id="password" 

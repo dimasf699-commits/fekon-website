@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { MapPin, Phone, Mail, Camera, Globe, Video, ChevronDown } from 'lucide-react'
+import { MapPin, Phone, Mail, Camera, Globe, Video } from 'lucide-react'
+import { footerLinks, contactInfo, PMB_URL } from '@/config/navigation'
 
 export function Footer() {
   return (
@@ -23,15 +24,15 @@ export function Footer() {
             <div className="space-y-3 mt-4 text-sm text-slate-300">
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 shrink-0 text-blue-400 mt-0.5" />
-                <span className="leading-relaxed">Jl. Jati No. 42B Tarogong Kaler, Kabupaten Garut, Jawa Barat 44151</span>
+                <span className="leading-relaxed">{contactInfo.address}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 shrink-0 text-blue-400" />
-                <span>(0262) 232773</span>
+                <a href={`tel:${contactInfo.phone.replace(/[^0-9]/g, '')}`} className="hover:text-white transition-colors">{contactInfo.phone}</a>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 shrink-0 text-blue-400" />
-                <span>info@fekon.uniga.ac.id</span>
+                <a href={`mailto:${contactInfo.email}`} className="hover:text-white transition-colors">{contactInfo.email}</a>
               </div>
             </div>
           </div>
@@ -40,26 +41,13 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-white text-base sm:text-lg pb-2 border-b border-white/10">Program Studi</h3>
             <ul className="space-y-3 text-sm text-slate-400">
-              <li>
-                <Link href="/program-studi/akuntansi" className="hover:text-blue-400 transition-colors block py-1">
-                  S1 Akuntansi
-                </Link>
-              </li>
-              <li>
-                <Link href="/program-studi/manajemen" className="hover:text-blue-400 transition-colors block py-1">
-                  S1 Manajemen
-                </Link>
-              </li>
-              <li>
-                <Link href="/program-studi/pariwisata" className="hover:text-blue-400 transition-colors block py-1">
-                  S1 Pariwisata
-                </Link>
-              </li>
-              <li>
-                <Link href="/program-studi/bisnis-digital" className="hover:text-blue-400 transition-colors block py-1">
-                  S1 Bisnis Digital
-                </Link>
-              </li>
+              {footerLinks.programs.map((link) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="hover:text-blue-400 transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 rounded-sm">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -67,31 +55,18 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-white text-base sm:text-lg pb-2 border-b border-white/10">Tautan Cepat</h3>
             <ul className="space-y-3 text-sm text-slate-400">
-              <li>
-                <Link href="/akademik/kalender" className="hover:text-blue-400 transition-colors block py-1">
-                  Kalender Akademik
-                </Link>
-              </li>
-              <li>
-                <Link href="https://pmb.uniga.ac.id" className="hover:text-blue-400 transition-colors block py-1" target="_blank">
-                  Pendaftaran Mahasiswa Baru
-                </Link>
-              </li>
-              <li>
-                <Link href="https://ojs.fekon.uniga.ac.id" className="hover:text-blue-400 transition-colors block py-1" target="_blank">
-                  Jurnal Ilmiah
-                </Link>
-              </li>
-              <li>
-                <Link href="/dokumen" className="hover:text-blue-400 transition-colors block py-1">
-                  Download Dokumen
-                </Link>
-              </li>
-              <li>
-                <Link href="/link" className="hover:text-blue-400 transition-colors block py-1">
-                  Link Layanan Terpadu
-                </Link>
-              </li>
+              {footerLinks.quickLinks.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href} 
+                    className="hover:text-blue-400 transition-colors block py-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 rounded-sm"
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -102,18 +77,18 @@ export function Footer() {
               Dapatkan informasi terbaru melalui media sosial resmi Fakultas Ekonomi UNIGA.
             </p>
             <div className="flex gap-4 pt-2">
-              <Link href="#" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-300">
+              <a href={contactInfo.socials.instagram} target="_blank" rel="noopener noreferrer" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                 <Camera className="h-5 w-5" />
                 <span className="sr-only">Instagram</span>
-              </Link>
-              <Link href="#" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-300">
+              </a>
+              <a href={contactInfo.socials.facebook} target="_blank" rel="noopener noreferrer" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                 <Globe className="h-5 w-5" />
                 <span className="sr-only">Facebook</span>
-              </Link>
-              <Link href="#" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-300">
+              </a>
+              <a href={contactInfo.socials.youtube} target="_blank" rel="noopener noreferrer" className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all text-slate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                 <Video className="h-5 w-5" />
                 <span className="sr-only">YouTube</span>
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -124,9 +99,9 @@ export function Footer() {
         <div className="container mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row items-center justify-between text-xs text-slate-400 gap-4 text-center md:text-left">
           <p>© {new Date().getFullYear()} Fakultas Ekonomi Universitas Garut. Hak Cipta Dilindungi.</p>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-            <Link href="/kebijakan-privasi" className="hover:text-white p-1">Kebijakan Privasi</Link>
-            <Link href="/syarat-ketentuan" className="hover:text-white p-1">Syarat & Ketentuan</Link>
-            <Link href="/admin" className="hover:text-white p-1">Login Admin</Link>
+            <Link href="/kebijakan-privasi" className="hover:text-white p-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm">Kebijakan Privasi</Link>
+            <Link href="/syarat-ketentuan" className="hover:text-white p-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm">Syarat & Ketentuan</Link>
+            <Link href="/admin" className="hover:text-white p-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white rounded-sm">Login Admin</Link>
           </div>
         </div>
       </div>
