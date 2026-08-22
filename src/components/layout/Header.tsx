@@ -50,16 +50,17 @@ export function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-56 z-[60]">
                     {item.children.map((child) => (
-                      <DropdownMenuItem key={child.name} asChild>
-                        <Link 
-                          href={child.href} 
-                          className="w-full cursor-pointer p-2 flex text-sm"
-                          target={child.external ? '_blank' : undefined}
-                          rel={child.external ? 'noopener noreferrer' : undefined}
-                        >
+                      <Link 
+                        key={child.name}
+                        href={child.href} 
+                        className="w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 rounded-sm block"
+                        target={child.external ? '_blank' : undefined}
+                        rel={child.external ? 'noopener noreferrer' : undefined}
+                      >
+                        <DropdownMenuItem className="w-full cursor-pointer p-2 flex text-sm">
                           {child.name}
-                        </Link>
-                      </DropdownMenuItem>
+                        </DropdownMenuItem>
+                      </Link>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
